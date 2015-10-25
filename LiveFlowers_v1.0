@@ -1,0 +1,59 @@
+//Live Flowers v1.0- Hallmark Blooming Expressions Hack
+//By Dominick C. Watts
+//1) Open and close flowers based on motion detected.
+//2) Delay code to allow flowers to complete cycle
+//3) Limit the number of times the flowers will open and close by using a count and limit
+
+//Global Constants
+const int motionPin = 7; //digital pin connected to PIR motion detector
+const int flowerPin = 8; //digital pin connected to flower cycle switch
+const int motionThreshold = 5; //Count threshold for when the motion will call the cycleFlower() function
+const int cycleDelay = 30000; //global variable to delay code for flower cycle to complete
+
+//Global Variables
+int motionCount = 0; //global variable to hold current motion count
+int motionState = 0; //current state of motionPin
+int lastMotionState = 0; //previous state of motionPin
+
+void setup(){
+  //Debug
+  Serial.begin(9600);
+  Serial.println("Starting Up Live Flower v1");
+  //Set pin modes
+  pinMode(motionPin, INPUT);
+  pinMode(flowerPin, OUTPUT);
+  //Show the startup went as expected
+  Serial.println("Live Flowers v1 Ready");
+}
+void loop(){
+      //read the motionPin
+      motionState = digitalRead(motionPin);
+      //Check for motion
+      if (motionState != lastMotionState){
+      if (motionState == HIGH){
+      Serial.println("Motion Detected");
+      Serial.println(motionCount);
+      //motion dectected, increment motionCount variable
+      motionCount++;
+      Serial.println(motionCount);
+      delay(5000);
+      //Check to see if motionCount is equal to or greater than motionThreshold
+      if (motionCount >= motionThreshold){
+      //If above check is false do nothing; if true call cycleFlower() function
+      Serial.println("Calling cycleFlowers function");
+      cycleFlowers();
+      }
+    }
+  }
+}
+void cycleFlowers(){
+  //1) Write flowerPin high then low to cycle flowers and 2) reset motionCount to 0
+  Serial.println("Entering cycleFlowers function");
+  digitalWrite(flowerPin, HIGH);
+  delay(10);
+  digitalWrite(flowerPin, LOW);
+  motionCount = 0;
+  Serial.println(motionCount);
+  delay(cycleDelay);
+  Serial.println("Exiting cycleFlowers function call");
+}
